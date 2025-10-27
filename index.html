@@ -1,40 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Webcam Capture</title>
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Webcam Only</title>
 <style>
   body {
+    margin: 0;
     background: #111;
-    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    font-family: sans-serif;
-  }
-  #mediaWrapper {
-    position: relative;
+    height: 100vh;
   }
   video {
-    width: 320px;
-    height: 240px;
-    background: #222;
+    width: 100%;
+    max-width: 480px;
+    height: auto;
     border-radius: 8px;
+    background: #222;
   }
-  .flash {
-    position: absolute;
-    inset: 0;
-    background: white;
-    opacity: 0;
-    pointer-events: none;
+</style>
+</head>
+<body>
+
+<video id="videoElement" autoplay playsinline muted></video>
+
+<script>
+const video = document.getElementById("videoElement");
+
+async function startWebcam() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+  } catch(e) {
+    alert("Webcam erişilemedi!");
+    console.error(e);
   }
-  .shutterClick {
+}
+
+startWebcam();
+</script>
+
+</body>
+</html>  .shutterClick {
     animation: flash 0.3s ease;
   }
   @keyframes flash {
