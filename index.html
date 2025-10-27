@@ -121,6 +121,93 @@ captureBtn.addEventListener("click", () => {
 </script>
 
 </body>
+</html>  .shutterClick {
+    animation: flash 0.3s ease;
+  }
+  @keyframes flash {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .controls, .otherControls {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    font-size: 14px;
+  }
+  button.active { background: #555; }
+  .thumbnail img { width: 60px; height: 45px; object-fit: cover; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<main id="mediaWrapper">
+  <video id="videoElement" autoplay playsinline muted></video>
+  <div class="flash"></div>
+
+  <div class="controls">
+    <button data-zoom="0.5">0.5x</button>
+    <button data-zoom="1" class="active">1x</button>
+    <button data-zoom="2">2x</button>
+  </div>
+
+  <div class="otherControls">
+    <button class="thumbnail"><img src="" alt="Captured thumbnail"/></button>
+    <button class="camerabutton">Capture</button>
+  </div>
+</main>
+
+<script>
+const video = document.getElementById("videoElement");
+const captureBtn = document.querySelector(".camerabutton");
+const thumbnailImg = document.querySelector(".thumbnail img");
+const controls = document.querySelector(".controls");
+const flashEl = document.querySelector(".flash");
+
+// webcam aç
+async function startWebcam() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+  } catch(e) {
+    alert("Webcam erişilemedi!");
+    console.error(e);
+  }
+}
+startWebcam();
+
+// zoom
+controls.addEventListener("click", e => {
+  const btn = e.target.closest("button[data-zoom]");
+  if (!btn) return;
+  const zoom = parseFloat(btn.dataset.zoom) || 1;
+  video.style.transform = `scale(${zoom})`;
+  controls.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+});
+
+// capture
+captureBtn.addEventListener("click", () => {
+  flashEl.classList.add("shutterClick");
+  flashEl.addEventListener("animationend", () => flashEl.classList.remove("shutterClick"), { once: true });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth || 320;
+  canvas.height = video.videoHeight || 240;
+  canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+  thumbnailImg.src = canvas.toDataURL("image/jpeg");
+});
+</script>
+
+</body>
 </html>  }
   .panel{
     width:min(980px,96vw);
